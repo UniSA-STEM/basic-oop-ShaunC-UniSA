@@ -7,3 +7,17 @@ Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
+# Imports
+from Asset import Asset
+from Hacker import Hacker
+from Rig import Rig
+
+def main():
+    """Into the Grid"""
+    print(f"Welcome to:\n*** INTO THE GRID ***")
+    print("\nPress 'P' to play.\nPress 'Q' to quit.\n")
+    input("Select an option: ")
+    pass # TODO: User Interface
+
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,9 @@
 """
 File: main.py
-Description: <A brief description of this Python module.>
-Author: <full name>
-ID: <student_id>
-Username: <username>
+Description: This contains the main program logic for 'Into the Grid'.
+Author: Shaun Cantley
+ID: cansy012@mymail.unisa.edu.au
+Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
+

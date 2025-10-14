@@ -1,8 +1,9 @@
 """
 File: Asset.py
-Description: <A brief description of this Python module.>
-Author: <full name>
-ID: <student_id>
-Username: <username>
+Description: An asset represents a computer object.
+Author: Shaun Cantley
+ID: cansy012@mymail.unisa.edu.au
+Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
+

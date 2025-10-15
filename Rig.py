@@ -17,7 +17,7 @@ class Rig:
     RemoveableDrives = 1
     EncryptedStorage = []
     UnencryptedStorage = []
-    Level = 0
+    UpgradeLevel = 0
 
     def __init__(self, name):
         self.Name = name
@@ -27,7 +27,6 @@ class Rig:
         self.RemoveableDrives = 1
         self.EncryptedStorage = []
         self.UnencryptedStorage = []
-
 
     def extract_unsecured_assets(self):
         """Unsecured assets are extracted from the rig."""
@@ -45,13 +44,13 @@ class Rig:
             else:
                 print(f"No repair is needed.")
         else:
-            print("You don't have enough CryptoToken to repair!")
+            print("You don't have enough CryptoTokens to repair!")
 
     def upgrade(self):
         """Consumes a hardware patch to increase the rig level."""
         if HardwarePatch > 0:
             HardwarePatch -= 1
-            Level += 1
+            UpgradeLevel += 1
             print(f"The hardware patch was successful!\nThe rig level is now {level}.")
         else:
             print(f"There are no hardware patches!")
@@ -60,4 +59,9 @@ class Rig:
         """Get hit with a data spike!"""
         pass # TODO build method
 
-
+    def __str__(self):
+        """Prints the details of the rig."""
+        return (f"Rig: {self.Name}\n"
+                f"Damage: {self.Damage}\n"
+                f"Upgrade: {self.UpgradeLevel}\n"
+                f"Assets: {self.EncryptedStorage}{self.UnencryptedStorage}")

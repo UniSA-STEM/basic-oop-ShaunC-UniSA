@@ -6,57 +6,52 @@ ID: cansy012@mymail.unisa.edu.au
 Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
+# Imports
+from Asset import CryptoToken, DataSpike, SecurityChip, HardwarePatch, RemoveableDrive
+from Rig import Rig
+
+
 class Hacker:
     """A hacker can hack rigs"""
 
-    CryptoToken = 1
-    Rig = 0
-    TraceLevel = 0
-    Exposed = False
-    SecurityChip = 0
-    HardwarePatch = 0
-    Assets = []
-
     def __init__(self, name):
         self.name = name
-        self.CryptoToken = Hacker.CryptoToken
-        self.Rig = Hacker.Rig
-        self.TraceLevel = Hacker.TraceLevel
-        self.Exposed = Hacker.Exposed
-        self.SecurityChip = Hacker.SecurityChip
-        self.HardwarePatch = Hacker.HardwarePatch
-        self.Assets = Hacker.Assets
+        self.crypto_tokens = 1
+        self.rig = False
+        self.trace_level = 0
+        self.exposed = False
+        self.security_chip = 1
+        self.hardware_patch = 1
+        self.inventory = []
+        self.upgrade_level = 0
 
-    def _aquire_rig(self):
+
+    def acquire_rig(self):
         """Finds a rig to hack"""
-        if CryptoToken <= 1:
-
-            CryptoToken -= 1
-            Rig += 1
-
+        if self.crypto_tokens <= 1:
+            self.crypto_tokens -= 1
             print(f"{self.name} used a CryptoToken.")
-            print("A rig has been aquired!")
+            self.rig = Rig("Normal Rig")
+            print("A rig has been acquired!")
         else:
-            print("not enough cryptotokens")
-    pass # TODO: Rig interactions
+            print("Not enough CryptoTokens!")
 
-    def _launch_attack(self):
+    def launch_attack(self):
         """Launches an attack"""
         pass  # TODO: Rig interactions
 
-    def _encrypt_assets(self):
+    def encrypt_assets(self):
         """Encrypts assets"""
-        pass  # TODO: Rig interactions
+        for item in self.inventory:
+            print(item)
 
-    def _decrypt_assets(self):
+    def decrypt_assets(self):
         """Decrypts assets"""
         pass  # TODO: Rig interactions
 
-    def _upgrade_rig(self):
+    def upgrade_rig(self):
         """Upgrades rig with a hardware patch"""
-        if Rig > 0 and HardwarePatch > 0:
-            UpgradeLevel += 1
-        pass  # TODO: Rig interactions
-
-
-
+        if self.rig != 0 and self.hardware_patch != 0:
+            self.upgrade_level += 1
+        else:
+            print(f"You need a rig and a hardware patch to upgrade.")

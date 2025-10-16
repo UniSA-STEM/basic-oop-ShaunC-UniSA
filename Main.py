@@ -13,9 +13,10 @@ from Hacker import Hacker
 from Rig import Rig
 import random
 
-def play(hacker):
+def play(hacker, other_players):
     """Starts a new game of Into the Grid."""
     running = True
+    turn = 0
 
     while running:
         # Player actions menu
@@ -24,15 +25,16 @@ def play(hacker):
         print("2. Launch Data Spike")
         print("3. Encrypt Asset")
         print("4. Upgrade Rig")
-        print("5. View Inventory")
-        print("6. Show Status")
-        print("0. Exit Game\n")
-        choice = input("Choose an action: ")
+        print("I. View Inventory")
+        print("S. Show Status")
+        print("Q. Exit Game\n")
+        choice = input(f"It's turn {turn}. Choose the next action: ").lower()
 
         if choice == "1":
             # Aquire a rig
             if hacker.crypto_tokens >= 1:
                 hacker.acquire_rig()
+                turn += 1
             else:
                 print("You need a CryptoToken to acquire a rig.")
 
@@ -42,6 +44,7 @@ def play(hacker):
                 print("You launch a Data Spike!")
                 hacker.trace_level += 1
                 print(f"Your spike is being traced!\n{hacker.name}'s trace level is now {hacker.trace_level}.")
+                turn += 1
             else:
                 print("You need a rig before you can send a spike.")
 
@@ -54,6 +57,7 @@ def play(hacker):
                     print(", ".join(hacker.inventory))
                     hacker.security_chip -= 1
                     print(f"Encryption complete!")
+                    turn += 1
                 else:
                     print("Your inventory is empty!")
             else:
@@ -61,22 +65,19 @@ def play(hacker):
 
         elif choice == "4":
             # Upgrade hacker rig
-            if hacker.hardware_patch >= 1:
-                hacker.upgrade_rig()
-                print(f"Your rig has been upgraded!")
-            else:
-                print("You need a hardware patch to upgrade a rig.")
+            hacker.upgrade_rig()
+            turn += 1
 
-        elif choice == "5":
+        elif choice == "i":
             # Views current inventory
             print("Inventory:", hacker.inventory)
 
-        elif choice == "6":
+        elif choice == "s":
             # Show player status
             print(f"Hacker: {hacker.name}")
             print(f"Trace Level: {hacker.trace_level}")
 
-        elif choice == "0":
+        elif choice == "q":
             print("Exiting game...")
             running = False
 
@@ -93,7 +94,7 @@ def main():
     title = " *** Into the Grid *** "
     options = ["P: Play", "Q: Quit", "H: Help"]
     width = max(len(title), *(len(option) for option in options)) + 4
-    names_list = ["Neo", "Boris", "Ghost", "Shadow", "Trinity"]
+    names_list = ["Neo", "Boris", "Ghost", "Shadow", "Trinity", "Stanley", "Angela", "Gabriel", "ZeroCool", "AcidBurn"]
 
 
     print("+" + "-" * width + "+")
@@ -108,21 +109,36 @@ def main():
     choice = input("Select an option: ").lower()
 
     if choice == "p":
-        # ask the user for a name, strip whitespace
         name = input("Enter the player name (or press Enter to pick randomly): ").strip()
         if not name:
             name = random.choice(names_list)
-
-        # create the Hacker with the chosen name
-        hacker = Hacker(name)
-        print("\nGrid online!\nYou are now in the Grid.\n")
+        hacker = Hacker(name) # Create the player hacker with the chosen name
+        print("\nGrid online!\nYou are now in the Grid.\n") # Opening sequence
         print(f"Welcome, {hacker.name}. You are now in a digital realm where code shapes reality"
               f" and every connection pulses with possibility.\nHere, the lines between the virtual and the real blur,"
               f" and only those who can navigate its layers survive.\nThis isn't only a network- it is a living system,"
               f"a constantly shifting matrix where data is power and hackers are kings.\n"
               f"Remember, all your choices ripple across the grid- so step carefully- your journey begins now...\n")
         input("Press Enter to continue...\n")
-        play(hacker)
+
+        remaining_names = [n for n in names_list if n != name] # Create three other unique players
+
+        hacker2 = Hacker(random.choice(remaining_names))
+        remaining_names.remove(hacker2.name)
+        hacker3 = Hacker(random.choice(remaining_names))
+        remaining_names.remove(hacker3.name)
+        hacker4 = Hacker(random.choice(remaining_names))
+        remaining_names.remove(hacker4.name)
+
+        other_players = [hacker2, hacker3, hacker4]
+
+        print(f"*** ALERT ***")
+        print(f"We have detected other hackers in the network!")
+        print(f"DOX protocols has confirmed the presence of {hacker2.name}, {hacker3.name} and {hacker4.name}")
+        print(f"The system is online. How would you like to proceed?")
+
+        play(hacker, other_players)
+
     elif choice == "h":
         help() # TODO function
     elif choice == "q":

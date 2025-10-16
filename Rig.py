@@ -24,14 +24,14 @@ class Rig:
         self.DataSpike = 2
         self.Damage = 0
         self.Broken = False
-        self.RemoveableDrives = 1
+        self.RemoveableDrive = 1
         self.EncryptedStorage = []
         self.UnencryptedStorage = []
 
     def extract_unsecured_assets(self):
         """Unsecured assets are extracted from the rig."""
         if RemoveableDrive > 0:
-            RemoveableDrive = RemoveableDrive - 1
+            RemoveableDrive -= 1
         else:
             print(f"There are no removable drives!")
 
@@ -57,7 +57,7 @@ class Rig:
 
     def take_damage(self, damage):
         """Get hit with a data spike!"""
-        pass # TODO build method
+
 
     def __str__(self):
         """Prints the details of the rig."""

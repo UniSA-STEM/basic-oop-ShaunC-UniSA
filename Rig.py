@@ -7,6 +7,9 @@ Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
+# imports
+from Asset import Asset
+
 class Rig:
     """A rig is a computer with various properties that a hacker may interact with."""
 
@@ -46,18 +49,21 @@ class Rig:
         else:
             print("You don't have enough CryptoTokens to repair!")
 
-    def upgrade(self):
-        """Consumes a hardware patch to increase the rig level."""
-        if HardwarePatch > 0:
-            HardwarePatch -= 1
-            UpgradeLevel += 1
-            print(f"The hardware patch was successful!\nThe rig level is now {level}.")
+    def upgrade(self, player):
+        """Consumes a hardware patch from rig or player inventory to increase the rig level."""
+        if hasattr(self, 'HardwarePatch') and self.HardwarePatch > 0:
+            self.HardwarePatch -= 1
+            self.UpgradeLevel += 1
+            print(f"The hardware patch was successful!\nThe rig level is now {self.UpgradeLevel}.")
+        elif hasattr(player, 'hardware_patch') and player.hardware_patch > 0:
+            player.hardware_patch -= 1
+            self.UpgradeLevel += 1
+            print(f"The hardware patch was successful!\nThe rig level is now {self.UpgradeLevel}.")
         else:
-            print(f"There are no hardware patches!")
+            print("There are no hardware patches available to upgrade the rig!")
 
     def take_damage(self, damage):
         """Get hit with a data spike!"""
-
 
     def __str__(self):
         """Prints the details of the rig."""

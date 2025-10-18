@@ -7,7 +7,8 @@ Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
 # Imports
-from Asset import CryptoToken, DataSpike, SecurityChip, HardwarePatch, RemoveableDrive
+from Asset import CryptoToken, DataSpike, SecurityChip, HardwarePatch, RemovableDrive
+
 import Rig
 
 
@@ -30,11 +31,10 @@ class Hacker:
         """Finds a rig to hack"""
         if self.crypto_tokens <= 1:
             self.crypto_tokens -= 1
-            print(f"{self.name} used a CryptoToken.")
+            print(f"{self.name} used a CryptoToken to aquire a rig!.")
             self.rig = Rig.Rig("Normal Rig")
-            print("A rig has been acquired!")
         else:
-            print("Not enough CryptoTokens!")
+            print(f"Sorry {self.player}, not enough CryptoTokens!")
 
     def launch_attack(self):
         """Launches an attack"""
@@ -53,6 +53,6 @@ class Hacker:
         """Upgrades rig with a hardware patch"""
         if self.rig != 0 and self.hardware_patch != 0: # Upgrades rig if the required items are available
             self.upgrade_level += 1
-            print(f"Your rig has been upgraded!")
+            print(f"{self.name}'s rig has been upgraded!\n")
         else:
             print(f"You need a rig and a hardware patch to upgrade.")

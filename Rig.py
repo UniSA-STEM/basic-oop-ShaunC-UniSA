@@ -16,20 +16,25 @@ class Rig:
     """A rig is a computer with various properties that a hacker may interact with."""
     def __init__(self, name):
         self.name = name
+        self.damage = 0
         self.condition = 2
         self.broken = False
-        self.removable_drive = 1
+        self.upgrade_level = 0
         self.encrypted_storage = []
         self.unencrypted_storage = []
-        self.upgrade_level = 0
+        self.unencrypted_storage.append(DataSpike()) # Start with 2 DataSpikes and 1 RemovableDrive
+        self.unencrypted_storage.append(DataSpike())
+        self.unencrypted_storage.append(RemovableDrive())
+        # self.removable_drive = 1
         self.hardware_patch = 0
-        self.data_spike = 1
+        # self.data_spike = 1
         self.security_chip = 1
 
     def extract_unsecured_assets(self, hacker):
         """Unsecured assets are extracted from the rig."""
-        if self.removable_drive > 0:
-            self.removable_drive -= 1
+        removable_drive = next((asset for asset in self.unencrypted_storage if asset.name == "Removable Drive"),None)
+        if removable_drive:
+            self.unencrypted_storage.remove(removable_drive)
             hacker.trace_level += 1
             print("Unsecured assets removed from rig.")
         else:
@@ -77,7 +82,10 @@ class Rig:
 
     def __str__(self):
         """Prints the details of the rig."""
-        return (f"rig: {self.name}\n"
+        encrypted_names = [asset.name for asset in self.encrypted_storage]
+        unencrypted_names = [asset.name for asset in self.unencrypted_storage]
+        return (f"Rig: {self.name}\n"
                 f"Condition: {self.condition}\n"
                 f"Upgrade: {self.upgrade_level}\n"
-                f"Assets: {self.encrypted_storage}{self.unencrypted_storage}")
+                f"Encrypted Assets: {encrypted_names}\n"
+                f"Unencrypted Assets: {unencrypted_names}")

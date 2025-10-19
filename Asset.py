@@ -15,7 +15,7 @@ class Asset:
         self.encrypted = False
 
     def __str__(self):
-        """Return a representation of the asset."""
+        """Prints the details of the asset."""
         if self.encrypted:
             return f"{self.name}: {self.description} [Encrypted]"
         else:
@@ -25,27 +25,41 @@ class Asset:
 class CryptoToken(Asset):
     """A cryptographic token is used to acquire or repair rigs."""
     def __init__(self):
-        Asset.__init__(self, "crypto_token", "Used to acquire or repair rigs.")
+        self.name = "Crypto Token"
+        self.description = "Used to acquire or repair rigs."
+        self.encrypted = False  # Default: not encrypted
+
 
 class DataSpike(Asset):
     """A data spike is used in battle."""
     def __init__(self):
-        Asset.__init__(self, "data_spike", "Used to attack players.")
+        self.name = "Data Spike"
+        self.description = "Used to attack players."
+        self.encrypted = False
+
 
 class RemovableDrive(Asset):
     """A removable drive is found in rigs and used for data extraction."""
     def __init__(self):
-        Asset.__init__(self, "removable_drive", "Used for data exfiltration.")
+        self.name = "Removable Drive"
+        self.description = "Used for data exfiltration."
+        self.encrypted = False
+
 
 class SecurityChip(Asset):
     """A security chip is used to encrypt or decrypt assets."""
     def __init__(self):
-        Asset.__init__(self, "security_chip", "Used to encrypt or decrypt assets.")
+        self.name = "Security Chip"
+        self.description = "Used to encrypt or decrypt assets."
+        self.encrypted = False
+
 
 class HardwarePatch(Asset):
     """A hardware patch is used to upgrade rigs."""
     def __init__(self):
-        Asset.__init__(self, "hardware_patch", "Used to upgrade rigs.")
+        self.name = "Hardware Patch"
+        self.description = "Used to upgrade rigs."
+        self.encrypted = False
 
 
 

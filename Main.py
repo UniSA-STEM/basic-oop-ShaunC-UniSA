@@ -9,8 +9,8 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 
 # Imports
 from Asset import CryptoToken, DataSpike, SecurityChip, HardwarePatch, RemovableDrive
+from Hacker import Hacker
 from Rig import Rig
-import Hacker
 import random
 import time
 
@@ -176,7 +176,8 @@ def play(hacker, other_players):
 
         if running:  # End of turn summary
             print(f"\nEnd of turn {turn_number}\n\n")
-            turn_number += 1
+            turn_number += 1 # Increment turn
+            action = None # Initialise variable
             for player in other_players + [hacker]:  # All players get a new random asset at end of turn
                 if player.rig:
                     asset = player.rig.give_random_asset()
@@ -200,70 +201,96 @@ def play(hacker, other_players):
 
 def test_mode():
     """A variety of tests to show how various elements work"""
-    title = "*** Into the Grid: Test Mode ***"
-    options = [
-        "1: Asset encrypt/decrypt validator",
-        "2: View player inventories",
-        "3: Encrypt without Security Chip",
-        "4: Upgrading rigs",
-        "Q: Return to Main Menu"]
+    running = True
+    while running:
+        title = "*** Into the Grid: Test Mode ***"
+        options = [
+            "1: Asset encrypt/decrypt validator",
+            "2: View player inventories",
+            "3: Encrypt without Security Chip",
+            "4: Upgrading rigs",
+            "5: Call strings",
+            "Q: Return to Main Menu"]
 
-    # Test menu format
-    print("\n" * 20)
-    width = max(len(title), *(len(option) for option in options)) + 47
-    print("+" + "-" * width + "+")
-    print("|" + title.center(width) + "|")
-    print("|" + "-" * width + "|")
-    for option in options:
-        print("| " + option.ljust(width - 2) + " |")
-    print("+" + "-" * width + "+")
-    choice = input("Select an option: ").lower()
-
-    if choice == "1":
-        # Test: Asset encryption/decryption
-        asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
-        random_asset_class = random.choice(asset_classes)
-        # Instantiate random asset
-        test = random_asset_class()
-        print("\nCreated Asset:")
-        print(test)
-        print("\nEncrypt Asset:")
-        test.encrypt()
-        print(test)
-        print("\nDecrypt Asset:")
-        test.decrypt()
-        print(test)
-        input("\nTest Successful! Press Enter to continue...")
-
-    elif choice == "2": # Test Encryption
-        hacker1 = Hacker.Hacker("Hacker1")
-        hacker1.acquire_rig()
-        hacker1.rig.give_random_asset()
-        hacker2 = Hacker.Hacker("Hacker2")
-        hacker2.acquire_rig()
-        hacker2.rig.give_random_asset()
-        for player in [hacker1, hacker2]:
-            print(f"\n--- {player.name}'s inventory ---")
-            for item in player.inventory:
-                print(item)
-            if player.rig:
-                print(f"\n--- {player.name}'s rig inventory ---")
-                for item in player.rig.unencrypted_storage + player.rig.encrypted_storage:
-                    print(item)
-
-        input("\nTest Successful! Press Enter to continue...")
-
-    elif choice == "3":
-        # Test: Upgrading rigs
-        input("\nTest Successful! Press Enter to continue...")
-
-    elif choice == "q":
-        # Quit to main menu
+        # Test menu format
         print("\n" * 20)
-        main()
+        width = max(len(title), *(len(option) for option in options)) + 47
+        print("+" + "-" * width + "+")
+        print("|" + title.center(width) + "|")
+        print("|" + "-" * width + "|")
+        for option in options:
+            print("| " + option.ljust(width - 2) + " |")
+        print("+" + "-" * width + "+")
+        choice = input("Select an option: ").lower()
 
-    else:
-        print("Invalid choice. Try again.")
+        if choice == "1":
+            # Test: Asset encryption/decryption
+            asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
+            random_asset_class = random.choice(asset_classes)
+            # Instantiate random asset
+            test = random_asset_class()
+            print("\nCreated Asset:")
+            print(test)
+            print("\nEncrypt Asset:")
+            test.encrypt()
+            print(test)
+            print("\nDecrypt Asset:")
+            test.decrypt()
+            print(test)
+            input("\nTest Successful! Press Enter to continue...")
+
+        elif choice == "2": # Test Encryption
+            hacker1 = Hacker("Hacker1")
+            hacker1.acquire_rig()
+            hacker1.rig.give_random_asset()
+            hacker2 = Hacker("Hacker2")
+            hacker2.acquire_rig()
+            hacker2.rig.give_random_asset()
+            for player in [hacker1, hacker2]:
+                print(f"\n--- {player.name}'s inventory ---")
+                for item in player.inventory:
+                    print(item)
+                if player.rig:
+                    print(f"\n--- {player.name}'s rig inventory ---")
+                    for item in player.rig.unencrypted_storage + player.rig.encrypted_storage:
+                        print(item)
+
+            input("\nTest Successful! Press Enter to continue...")
+
+        elif choice == "3":
+            # Test: Upgrading rigs
+            input("\nTest Successful! Press Enter to continue...")
+
+        elif choice == "5": # Test string methods
+            print("\nTest Hacker:") # Test hacker
+            hacker = Hacker("Neo")
+            hacker.acquire_rig()
+            hacker.inventory.append(DataSpike())
+            hacker.inventory.append(SecurityChip())
+            print(hacker)
+            input("\nTest Successful! Press Enter to continue...")
+            print("\nTest Assets:") # Test all asset types
+            asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
+            for AssetClass in asset_classes:
+                asset = AssetClass()
+                print(asset)
+            input("\nTest Successful! Press Enter to continue...")
+            print("\nTest Rig:") # Tests rig
+            rig = Rig("TestRig")
+            rig.unencrypted_storage.append(DataSpike())
+            rig.encrypted_storage.append(SecurityChip())
+            rig.unencrypted_storage.append(RemovableDrive())
+            print(rig)
+            input("\nTest Successful! Press Enter to continue...")
+
+
+        elif choice == "q":
+            # Quit to main menu
+            print("\n" * 20)
+            main()
+
+        else:
+            print("Invalid choice. Try again.")
 
 def main():
     """Into the Grid Main Menu"""
@@ -287,7 +314,7 @@ def main():
         name = input("Enter the player name (or press Enter to pick randomly): ").strip()
         if not name:
             name = random.choice(names_list)
-        hacker = Hacker.Hacker(name) # Create the player hacker with the chosen name
+        hacker = Hacker(name) # Create the player hacker with the chosen name
         print("\nGrid online!\nYou are now in the Grid.\n") # Opening sequence
         print(f"Welcome, {hacker.name}. You are now in a digital realm where code shapes reality"
               f" and every connection pulses with possibility.\n"
@@ -300,11 +327,11 @@ def main():
 
         # Create three other unique players
         remaining_names = [n for n in names_list if n != name]
-        hacker2 = Hacker.Hacker(random.choice(remaining_names))
+        hacker2 = Hacker(random.choice(remaining_names))
         remaining_names.remove(hacker2.name)
-        hacker3 = Hacker.Hacker(random.choice(remaining_names))
+        hacker3 = Hacker(random.choice(remaining_names))
         remaining_names.remove(hacker3.name)
-        hacker4 = Hacker.Hacker(random.choice(remaining_names))
+        hacker4 = Hacker(random.choice(remaining_names))
         remaining_names.remove(hacker4.name)
         other_players = [hacker2, hacker3, hacker4]
 
@@ -316,8 +343,7 @@ def main():
         input("\nPress Enter to continue...")
         play(hacker, other_players)
 
-    # Test mode checks game functions and shows output
-    elif choice == "t":
+    elif choice == "t": # Test mode to check game functions and shows output
         test_mode()
     elif choice == "q":
         print("Thanks for playing!\nSee you next time.")

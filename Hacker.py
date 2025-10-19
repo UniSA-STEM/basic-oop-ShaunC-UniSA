@@ -6,8 +6,8 @@ ID: cansy012@mymail.unisa.edu.au
 Username: cansy012
 This is my own work as defined by the University's Academic Misconduct Policy.
 """
+
 # Imports
-from Asset import CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch
 from Rig import Rig
 import time
 
@@ -78,3 +78,9 @@ class Hacker:
             self.rig.unencrypted_storage.append(item)
             print(f"Decrypted: {item}")
         self.rig.unencrypted_storage.clear()
+
+    def __str__(self):
+        """Prints the details of the hacker."""
+        rig_name = self.rig.name if self.rig else "No Rig"
+        inventory_items = ", ".join([item.name for item in self.inventory]) if self.inventory else "Empty"
+        return f"Hacker: {self.name} | Rig: {rig_name} | Trace Level: {self.trace_level} | Inventory: {inventory_items}"

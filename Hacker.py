@@ -8,13 +8,11 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 """
 # Imports
 from Asset import CryptoToken, DataSpike, SecurityChip, HardwarePatch, RemovableDrive
-
-import Rig
-
+from Rig import Rig
+import time
 
 class Hacker:
-    """A hacker can hack rigs"""
-
+    """A hacker can aquire rigs and hack others with them"""
     def __init__(self, name):
         self.name = name
         self.crypto_tokens = 1
@@ -26,19 +24,17 @@ class Hacker:
         self.inventory = []
         self.upgrade_level = 0
 
-
     def acquire_rig(self):
         """Finds a rig to hack"""
         if self.crypto_tokens <= 1:
             self.crypto_tokens -= 1
-            print(f"{self.name} used a CryptoToken to aquire a rig!.")
-            self.rig = Rig.Rig("Normal Rig")
+            self.rig = Rig(name=self.name)
+            time.sleep(1)
         else:
-            print(f"Sorry {self.player}, not enough CryptoTokens!")
+            print(f"Sorry {self.name}, you need a CryptoToken to do that.")
 
-    def launch_attack(self):
+    def spike_player(self, target):
         """Launches an attack"""
-        pass  # TODO: Rig interactions
 
     def encrypt_assets(self):
         """Encrypts assets"""
@@ -56,3 +52,9 @@ class Hacker:
             print(f"{self.name}'s rig has been upgraded!\n")
         else:
             print(f"You need a rig and a hardware patch to upgrade.")
+
+    def deploy_honeypot(self):
+        """Consumes a honeypot to stop any spikes directed at the player"""
+        if self.crypto_tokens <= 1:
+
+            self.crypto_tokens -= 1

@@ -23,7 +23,7 @@ class Asset:
         print(f"{self.name} is now decrypted.")
 
     def __str__(self):
-        """Return a formatted string representation of the asset."""
+        """Return a representation of the asset."""
         if self.encrypted:
             return f"{self.name}: {self.description} [Encrypted]"
         else:
@@ -33,27 +33,32 @@ class Asset:
 class CryptoToken(Asset):
     """A cryptographic token is used to acquire or repair rigs."""
     def __init__(self):
-        Asset.__init__(self, "CryptoToken", "A cryptographic token is used to acquire or repair rigs.")
+        Asset.__init__(self, "CryptoToken", "Used to acquire or repair rigs.")
 
 class DataSpike(Asset):
     """A data spike is used in battle."""
     def __init__(self):
-        Asset.__init__(self, "DataSpike", "A data spike is used in battle.")
+        Asset.__init__(self, "DataSpike", "Used to attack players.")
 
 class RemovableDrive(Asset):
     """A removable drive is found in rigs and used for data extraction."""
     def __init__(self):
-        Asset.__init__(self, "RemovableDrive", "A removable drive is used for data extraction.")
+        Asset.__init__(self, "RemovableDrive", "Used for data exfiltration.")
 
 class SecurityChip(Asset):
     """A security chip is used to encrypt or decrypt assets."""
     def __init__(self):
-        Asset.__init__(self, "SecurityChip", "A security chip is used to encrypt or decrypt assets.")
+        Asset.__init__(self, "SecurityChip", "Used to encrypt or decrypt assets.")
 
 class HardwarePatch(Asset):
     """A hardware patch is used to upgrade rigs."""
     def __init__(self):
-        Asset.__init__(self, "HardwarePatch", "A hardware patch is used to upgrade rigs.")
+        Asset.__init__(self, "HardwarePatch", "Used to upgrade rigs.")
+
+class HoneyPot(Asset):
+    """A decoy that mitigates a spike"""
+    def __init__(self):
+        Asset.__init__(self, "HoneyPot", "Used to fool a spike.")
 
 
 

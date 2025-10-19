@@ -10,18 +10,9 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 # imports
 from Asset import Asset
 
+
 class Rig:
     """A rig is a computer with various properties that a hacker may interact with."""
-
-    Name = ""
-    DataSpike = 2
-    Damage = 0
-    Broken = False
-    RemoveableDrives = 1
-    EncryptedStorage = []
-    UnencryptedStorage = []
-    UpgradeLevel = 0
-
     def __init__(self, name):
         self.Name = name
         self.DataSpike = 2

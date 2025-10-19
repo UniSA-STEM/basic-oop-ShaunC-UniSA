@@ -24,19 +24,21 @@ def play(hacker, other_players):
         print(f"\n--- Turn {turn_number} ---\n")
         for player in all_players:
             action_success = False  # Reset for each player's turn
-
             if player == hacker:
-                title = f"*** It's turn number {turn_number}, {player.name}. How should we proceed? ***"
+                title = f"*** Okay {player.name}, how should we proceed? ***"
                 options = [
                     "1: Acquire Rig",
-                    "2: Launch Data Spike",
-                    "3: Encrypt Asset",
+                    "2: Spike Player",
+                    "3: Deploy HoneyPot",
                     "4: Upgrade Rig",
+                    "5: Encrypt Asset"
+                    "",
                     "I: View Inventory",
                     "S: Show Status",
                     "Q: Exit Game"
                 ]
 
+                # Player menu formatting
                 width = max(len(title), *(len(option) for option in options)) + 8
                 print("+" + "-" * width + "+")
                 print("|" + title.center(width) + "|")
@@ -46,80 +48,113 @@ def play(hacker, other_players):
                 print("+" + "-" * width + "+")
 
                 choice = input("Choose an action: ").lower()
-                if choice == "1":
-                    if player.crypto_tokens >= 1:
+                if choice == "1": # Aquire Rig
+                    if player.crypto_tokens != 0:
+                        print("You have aquired a rig! Commencing network scan...")
                         player.acquire_rig()
                         action_success = True
                     else:
                         print(f"{player.name} needs a CryptoToken to acquire a rig.")
-                elif choice == "2":
+                elif choice == "2": # Attack
                     if player.rig is not None:
-                        print(f"{player.name} launched a Spike!")
+                        print(f"Select target:")
+                        spike_player(self, target)
                         player.trace_level += 1
-                        print(f"{player.name}'s trace level is now {player.trace_level}.")
                         action_success = True
                     else:
                         print(f"{player.name} needs a rig to send a spike.")
-                elif choice == "3":
+                elif choice == "3": # Defend
+                    if player.security_chip >= 1 and player.inventory:
+                        player.deploy_honeypot()
+                        player.CryptoToken -= 1
+                        action_success = True
+                    else:
+                        print("You need a CryptoToken to deploy a HoneyPot!")
+                elif choice == "4": # Encrypt Asset
                     if player.security_chip >= 1 and player.inventory:
                         print("Select an item to encrypt:", ", ".join(player.inventory))
-                        player.encrypt_assets()
+                        player.upgrade_rig()
                         player.security_chip -= 1
-                        print("Encryption complete!")
                         action_success = True
                     else:
                         print("Cannot encrypt. Either no SecurityChip or inventory is empty.")
-                elif choice == "4":
+                elif choice == "5": # Upgrade Rig
                     player.upgrade_rig()
                     action_success = True
-                elif choice == "i":
-                    print("Inventory:", player.inventory)
+
+                elif choice == "i": # Shows player inventory and also rig inventory if player has a rig.
+                    print(f"--- {player.name}'s Inventory ---")
+                    if player.inventory:
+                        for item in player.inventory:
+                            print(item)
+                    else:
+                        print("There's nothing in your inventory right now")
+                    if player.rig:
+                        if player.rig.UnencryptedStorage:
+                            print(item)
+                        else:
+                            print("There's nothing in rig storage")
+                        print(f"--- {player.name}'s Rig Inventory ---")
+                        for item in player.rig.UnencryptedStorage:
+                            print(item)
+
+                    play(hacker, other_players)
+
                 elif choice == "s":
-                    print(f"Trace Level: {player.trace_level}")
+                    print(f"\n\n{player.name}'s Status:")
+                    print(f"\nYour current trace Level is: {player.trace_level}")
+                    if player.rig == True:
+                        print(f"You have a rig in your posession")
+                    else:
+                        print(f"You don't have a Rig at the moment")
+                    play(hacker, other_players)
+
                 elif choice == "q":
                     print("Exiting game...")
                     running = False
-                    break
                 else:
                     print("Invalid choice. Try again.")
+                    play(hacker, other_players)
 
-            else:
-                # AI turn
+            else: # AI's turns
                 while not action_success:
-                    actions = []
-                    if player.crypto_tokens >= 1:
-                        actions.append("acquire")
-                    if player.rig is not None:
-                        actions.append("spike")
-                        if (hasattr(player.rig, # Only allow upgrade if player or rig has a hardware patch
-                                    'HardwarePatch') and player.rig.HardwarePatch > 0) or player.hardware_patch > 0:
-                            actions.append("upgrade")
-                    if player.security_chip >= 1 and player.inventory:
-                        actions.append("encrypt")
-
-                    action = random.choice(actions)
-
-                    if action == "acquire" and player.crypto_tokens >= 1:
+                    actions = [] # Uses validation to build a list of valid AI actions this turn
+                    if player.crypto_tokens != 0:
+                        actions.append("acquire a rig")
+                    if player.rig == True:
+                        actions.append("spikes player")
+                        actions.append("encrypts an asset")
+                        actions.append("deploys a honeypot")
+                        actions.append("upgrades their rig")
+                    action = random.choice(actions) # Simulates AI player choice by picking a random valid action
+                    if action == "acquire a rig":
                         player.acquire_rig()
                         action_success = True
-                    elif action == "spike" and player.rig is not None:
-                        player.trace_level += 1
+                    elif action == "spikes player":
+                        spike_player(target)
                         action_success = True
-                    elif action == "encrypt" and player.security_chip >= 1 and player.inventory:
+                    elif action == "encrypts an asset":
                         player.encrypt_assets()
-                        player.security_chip -= 1
                         action_success = True
-                    elif action == "upgrade":
+                    elif action == "upgrades their rig":
                         player.upgrade_rig()
                         action_success = True
+                    elif action == "deploys a honeypot":
+                        player.deploy_honeypot()
+                        action_success = True
 
-                print(f"{player.name} successfully chose to {action}.")
-                time.sleep(3)
-
-        if running:  # End of turn logic
+        if running and action_success:  # End of turn summary
             turn_number += 1
-            for player in [hacker] + other_players:
+            for player in other_players:  # All players get a new random asset at end of turn
                 give_random_asset(player, hacker)
+                header = f"{player.name}'s End of Turn"
+                print("+" + "-" * width + "+")
+                print("|" + header.center(width) + "|")
+                print("|" + "-" * width + "|")
+                print((f"| {player.name} chose to {action}").ljust(width) + " |")
+                print((f"| {player.name} added an item to their inventory").ljust(width) + " |")
+                print("+" + "-" * width + "+")
+                time.sleep(1)
 
     print("\nGrid offline! Thanks for playing.")
 
@@ -210,6 +245,7 @@ def main():
     print("+" + "-" * width + "+")
     choice = input("Select an option: ").lower()
 
+    # Start game
     if choice == "p":
         name = input("Enter the player name (or press Enter to pick randomly): ").strip()
         if not name:
@@ -236,10 +272,12 @@ def main():
         # Game starting dialogue
         print(f"*** ALERT ***")
         print(f"We have detected other hackers in the network!")
-        print(f"DOX protocols has confirmed the presence of {hacker2.name}, {hacker3.name} and {hacker4.name}")
-        print(f"The system reads as network online and awaits your command.")
+        print(f"NetDOX protocols have confirmed the presence of {hacker2.name}, {hacker3.name} and {hacker4.name}")
+        print(f"The system is online and awaits your command.")
+        input("\nPress Enter to continue...")
         play(hacker, other_players)
 
+    # Test mode checks game functions and shows output
     elif choice == "t":
         test_mode()
     elif choice == "q":
@@ -247,7 +285,7 @@ def main():
         quit()
     else:
         print("Invalid input.")
-        time.sleep(3)
+        time.sleep(1)
         main()
 
 if __name__ == "__main__":

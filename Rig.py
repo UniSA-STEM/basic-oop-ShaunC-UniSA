@@ -8,39 +8,58 @@ This is my own work as defined by the University's Academic Misconduct Policy.
 """
 
 # imports
-from Asset import Asset
-
+from Asset import CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch
+import random
 
 class Rig:
     """A rig is a computer with various properties that a hacker may interact with."""
     def __init__(self, name):
         self.Name = name
-        self.DataSpike = 2
-        self.Damage = 0
+        self.Condition = 2
         self.Broken = False
-        self.RemoveableDrive = 1
+        self.RemovableDrive = 1
         self.EncryptedStorage = []
         self.UnencryptedStorage = []
+        self.UpgradeLevel = 0
+        self.HardwarePatch = 0
+        self.DataSpike = 1
 
-    def extract_unsecured_assets(self):
+    def extract_unsecured_assets(self, hacker):
         """Unsecured assets are extracted from the rig."""
-        if RemoveableDrive > 0:
-            RemoveableDrive -= 1
+        if self.RemoveableDrive > 0:
+            self.RemoveableDrive -= 1
+            hacker.trace_level += 1
+            print("Unsecured assets removed from rig.")
         else:
             print(f"There are no removable drives!")
 
-    def repair(self):
-        """Uses a CryptoToken to repair the rig."""
-        if CryptoToken >= 0:
-            if self.Damage > 0:
-                Damage = 0
-                Broken = False
-            else:
-                print(f"No repair is needed.")
+    def repair_damage(self, hacker):
+        """Use a CryptoToken to repair the rig."""
+        if hacker.crypto_tokens > 0:
+            hacker.crypto_tokens -= 1
+            self.Condition = 2
+            self.Broken = False
+            print("Rig repaired successfully!")
         else:
-            print("You don't have enough CryptoTokens to repair!")
+            print("You don't have enough CryptoTokens to repair the rig.")
 
-    def upgrade(self, player):
+    def take_damage(self):
+        """Get hit with a data spike!"""
+        self.Condition -= 1
+        print(f"The rig was damaged by a spike!")
+        self.check_damage()
+
+    def check_damage(self):
+        """Checks the damage level of the rig"""
+        if self.Condition == 2:
+            print(f"Pristine: Rig is not damaged")
+        elif self.Condition == 1:
+            print(f"Warning: Rig has taken damage")
+        elif self.Condition == 0:
+            print(f"ALERT: Rig is Broken. Assets are exposed!")
+            self.Broken = True
+
+    def upgrade_rig(self, player):
         """Consumes a hardware patch from rig or player inventory to increase the rig level."""
         if hasattr(self, 'HardwarePatch') and self.HardwarePatch > 0:
             self.HardwarePatch -= 1
@@ -53,12 +72,20 @@ class Rig:
         else:
             print("There are no hardware patches available to upgrade the rig!")
 
-    def take_damage(self, damage):
-        """Get hit with a data spike!"""
+    def give_random_asset(player, hacker):
+        """Creates a random asset and adds to player rig inventory."""
+        asset_classes = [CryptoToken, DataSpike, RemovableDrive, SecurityChip, HardwarePatch]
+        chosen_asset_class = random.choice(asset_classes)  # Allocate random asset to player
+        asset = chosen_asset_class()
+        player.rig.UnencryptedStorage.append(asset)
+        if player is hacker:
+            print(f"\n{player.name} received a {asset.name}!")
+        else:
+            print(f"{player.name} received a {asset.name}")
 
     def __str__(self):
         """Prints the details of the rig."""
         return (f"Rig: {self.Name}\n"
-                f"Damage: {self.Damage}\n"
+                f"Condition: {self.Condition}\n"
                 f"Upgrade: {self.UpgradeLevel}\n"
                 f"Assets: {self.EncryptedStorage}{self.UnencryptedStorage}")

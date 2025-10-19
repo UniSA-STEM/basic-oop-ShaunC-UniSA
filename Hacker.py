@@ -16,7 +16,7 @@ class Hacker:
     def __init__(self, name):
         self.name = name
         self.crypto_tokens = 1
-        self.rig = False
+        self.rig = None
         self.trace_level = 0
         self.exposed = False
         self.security_chip = 1
@@ -28,13 +28,21 @@ class Hacker:
         """Finds a rig to hack"""
         if self.crypto_tokens <= 1:
             self.crypto_tokens -= 1
-            self.rig = Rig(name=self.name)
+            self.rig = Rig(f"{self.name}'s Rig")
             time.sleep(1)
         else:
             print(f"Sorry {self.name}, you need a CryptoToken to do that.")
 
-    def spike_player(self, target):
+    def launch_data_spike(self, target):
         """Launches an attack"""
+        if self.rig and getattr(self.rig, 'data_spikes', 0) > 0:
+            self.rig.data_spikes -= 1
+            print(f"{self.name} launched a Data Spike at {target.name}!")
+            self.trace_level += 1
+            target.rig.Condition -= 1
+            time.sleep(1)
+        else:
+            print(f"{self.name} needs a DataSpike to do that.")
 
     def encrypt_assets(self):
         """Encrypts assets"""

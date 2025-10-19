@@ -29,14 +29,12 @@ class CryptoToken(Asset):
         self.description = "Used to acquire or repair rigs."
         self.encrypted = False  # Default: not encrypted
 
-
 class DataSpike(Asset):
     """A data spike is used in battle."""
     def __init__(self):
         self.name = "Data Spike"
         self.description = "Used to attack players."
         self.encrypted = False
-
 
 class RemovableDrive(Asset):
     """A removable drive is found in rigs and used for data extraction."""
@@ -45,7 +43,6 @@ class RemovableDrive(Asset):
         self.description = "Used for data exfiltration."
         self.encrypted = False
 
-
 class SecurityChip(Asset):
     """A security chip is used to encrypt or decrypt assets."""
     def __init__(self):
@@ -53,13 +50,9 @@ class SecurityChip(Asset):
         self.description = "Used to encrypt or decrypt assets."
         self.encrypted = False
 
-
 class HardwarePatch(Asset):
     """A hardware patch is used to upgrade rigs."""
     def __init__(self):
         self.name = "Hardware Patch"
         self.description = "Used to upgrade rigs."
         self.encrypted = False
-
-
-

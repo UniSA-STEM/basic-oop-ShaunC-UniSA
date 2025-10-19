@@ -52,69 +52,64 @@ def play(hacker, other_players):
 
                     choice = input("Choose an action: ").lower()
 
-                    if choice == "1": # Acquire rig
-                        if player.crypto_tokens != 0 and player.rig != False:
+                    if choice == "1":  # Acquire rig
+                        if player.rig is None:
                             print("You have activated a rig! Commencing network scan...")
                             player.acquire_rig()
                             turn_taken = True
                         else:
-                            print("You need a rig and CryptoToken to do that.\n")
+                            print("Rig and CryptoToken needed to do that.\n")
                         input("\nPress Enter to continue...")
 
                     elif choice == "2":  # Upgrade rig
-                        if player.rig and player.hardware_patch > 0:
+                        if player.rig:
                             player.upgrade_rig()
                             turn_taken = True
                         else:
-                            print("You need a rig and a hardware patch to do that.\n")
+                            print("Rig and Hardware Patch needed to do that.\n")
                         input("\nPress Enter to continue...")
 
                     elif choice == "3": # Repair rig
-                        if player.rig and hacker.crypto_tokens != 0:
-                            player.repair_damage()
+                        if player.rig:
+                            player.rig.repair_damage(player)
                             turn_taken = True
                         else:
-                            print("You need a rig and CryptoToken to do that.\n")
+                            print("Rig and CryptoToken needed to do that.\n")
                         input("\nPress Enter to continue...")
 
                     elif choice == "4":  # Spike Attack
-                        if player.rig and player.rig.data_spike:
+                        if player.rig:
                             print("Valid targets:")
-                            for i in range(len(other_players)):
-                                print(f"{i + 1}) {other_players[i].name}")
+                            for i, p in enumerate(other_players, start=1): # Prevents AI from randomly targeting itself
+                                print(f"{i}) {p.name}")
                             target_index = int(input("Choose target (number): ")) - 1
                             target = other_players[target_index]
                             player.launch_data_spike(target)
-                            player.trace_level += 1
                             turn_taken = True
                         else:
-                            print(f"{player.name} needs a rig and a DataSpike to send a spike.\n")
+                            print(f"{player.name} needs a rig to send a spike.\n")
                         input("\nPress Enter to continue...")
 
-                    elif choice == "5": # Encrypt Asset
-                        if player.security_chip >= 1 and player.inventory:
-                            print("Select an item to encrypt:", ", ".join(player.inventory))
+                    elif choice == "5":  # Encrypt Asset
+                        if player.rig:
                             player.encrypt_assets()
-                            player.security_chip -= 1
                             turn_taken = True
                         else:
-                            print("Cannot encrypt. No Security Chip or inventory is empty.\n")
+                            print("Cannot encrypt. No rig available.\n")
                         input("\nPress Enter to continue...")
 
-                    elif choice == "6": # Decrypt Asset
-                        if player.security_chip >= 1 and player.inventory:
-                            print("Select an item to decrypt:", ", ".join(player.rig.encrypted_storage))
+                    elif choice == "6":  # Decrypt Asset
+                        if player.rig:
                             player.decrypt_assets()
-                            player.security_chip -= 1
                             turn_taken = True
                         else:
-                            print("Cannot Decrypt. No Security Chip or inventory is empty.\n")
+                            print("Cannot decrypt. No rig available.\n")
                         input("\nPress Enter to continue...")
 
-                    elif choice == "7": # Extract Assets
-                        if player.security_chip >= 1 and player.inventory:
-                            player.deploy_honeypot()
-                            player.CryptoToken -= 1
+                    elif choice == "7":  # Extract Assets
+                        token = next((a for a in player.inventory if isinstance(a, CryptoToken)), None)
+                        if token and player.inventory:
+                            player.inventory.remove(token)
                             turn_taken = True
                         else:
                             print(f"{player.name} needs a CryptoToken to do that.\n")
@@ -131,6 +126,8 @@ def play(hacker, other_players):
                         if player.rig:
                             for item in player.rig.unencrypted_storage:
                                 print(item)
+                            for item in player.rig.encrypted_storage:
+                                print(item)
                         else:
                             print("Empty")
                         input("\nPress Enter to continue...")
@@ -146,6 +143,7 @@ def play(hacker, other_players):
                     elif choice == "q":
                         print("Exiting game...")
                         running = False
+                        turn_taken = True
                     else:
                         print("Invalid choice. Try again.")
                         input("\nPress Enter to continue...")
@@ -154,7 +152,8 @@ def play(hacker, other_players):
                     while not turn_taken:
                         actions = [] # Uses validation to build a list of valid AI actions this turn
                         target = None # Spike target must be initalised for game loop
-                        if player.crypto_tokens != 0:
+                        token = any(isinstance(a, CryptoToken) for a in player.inventory)
+                        if token and player.rig is None:
                             actions.append("acquires a rig")
                         if player.rig:
                             actions.append("spikes")
@@ -163,7 +162,7 @@ def play(hacker, other_players):
                         action = random.choice(actions) # Simulates AI choice by picking a random valid action
                         if action == "acquires a rig":
                             player.acquire_rig()
-                        elif action == "spikes":
+                        elif action == "spikes": # Spike target list that excludes current player
                             valid_targets = [p for p in all_players if p is not player]
                             target = random.choice(valid_targets)
                             player.trace_level += 1

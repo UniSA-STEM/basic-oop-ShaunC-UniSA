@@ -25,10 +25,6 @@ class Rig:
         self.unencrypted_storage.append(DataSpike()) # Start with 2 DataSpikes and 1 RemovableDrive
         self.unencrypted_storage.append(DataSpike())
         self.unencrypted_storage.append(RemovableDrive())
-        # self.removable_drive = 1
-        self.hardware_patch = 0
-        # self.data_spike = 1
-        self.security_chip = 1
 
     def extract_unsecured_assets(self, hacker):
         """Unsecured assets are extracted from the rig."""
@@ -42,23 +38,24 @@ class Rig:
 
     def repair_damage(self, hacker):
         """Use a CryptoToken to repair the rig."""
-        if hacker.crypto_tokens > 0:
-            hacker.crypto_tokens -= 1
+        token = next((a for a in hacker.inventory if isinstance(a, CryptoToken)), None)
+        if token:
+            hacker.inventory.remove(token)
             self.condition = 2
             self.broken = False
-            print("rig repaired successfully!")
+            print("Rig repaired")
         else:
-            print("You don't have enough crypto_tokens to repair the rig.")
+            print("You don't have enough Crypto Tokens to repair the rig.")
         time.sleep(1)
 
-    def take_damage(self):
+    def take_damage(self, hacker):
         """Get hit with a data spike!"""
-        if Rig:
+        if self:
             self.condition -= 1
             print(f"The rig was damaged by a spike!")
         else:
             print("Hacker doesn't have a rig! No damage.")
-        self.check_damage()
+        self.check_damage(hacker)
         time.sleep(1)
 
     def check_damage(self, hacker):

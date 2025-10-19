@@ -179,7 +179,7 @@ def test_mode():
         "4: Upgrading rigs",
         "Q: Return to Main Menu"]
 
-    # Test menu formatting
+    # Test menu format
     print("\n" * 20)
     width = max(len(title), *(len(option) for option in options)) + 47
     print("+" + "-" * width + "+")

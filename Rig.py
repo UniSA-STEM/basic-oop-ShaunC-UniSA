@@ -14,8 +14,9 @@ import time
 
 class Rig:
     """A rig is a computer with various properties that a hacker may interact with."""
-    def __init__(self, name):
+    def __init__(self, name, owner):
         self.name = name
+        self.owner = owner
         self.damage = 0
         self.condition = 2
         self.broken = False
@@ -37,15 +38,18 @@ class Rig:
             print(f"There are no removable drives!")
 
     def repair_damage(self, hacker):
-        """Use a CryptoToken to repair the rig."""
+        """Use a CryptoToken to repair the rig if damaged"""
+        if self.condition == 2 and not self.broken:
+            print(f"{self.name}'s Rig is Pristine. No repair needed.")
+            return
         token = next((a for a in hacker.inventory if isinstance(a, CryptoToken)), None)
         if token:
             hacker.inventory.remove(token)
             self.condition = 2
             self.broken = False
-            print("Rig repaired")
+            print(f"{self.name} has been repaired successfully!")
         else:
-            print("You don't have enough Crypto Tokens to repair the rig.")
+            print(f"{hacker.name} does not have a CryptoToken to repair {self.name}.")
         time.sleep(1)
 
     def take_damage(self, hacker):
@@ -68,6 +72,28 @@ class Rig:
             print(f"ALERT: {hacker.name}'s rig is broken. Assets are exposed!\n")
             self.broken = True
         time.sleep(1)
+
+    def move_item(self): # Moves an item from rig to personal inventory
+        choice = -1
+        player = self.owner
+        while self.unencrypted_storage and choice != 0:
+            print("--- Transfer Assets from Rig ---")
+            for index, asset in enumerate(self.unencrypted_storage, 1): # Lists assets that can be moved
+                print(f"{index}. {asset.name} - {asset.description}")
+            print("0. Exit")
+            choice = input("Select an asset to transfer to inventory: ")
+            if not choice.isdigit():
+                print("Invalid choice. Enter a number.")
+                choice = -1
+                continue
+            choice = int(choice)
+            if 1 <= choice <= len(self.unencrypted_storage):
+                asset = self.unencrypted_storage.pop(choice - 1) # Gets the item and deletes it from Rig storage
+                player.inventory.append(asset)
+                player.trace_level += 1
+                print(f"{asset.name} moved to inventory. Your Trace level increased by 1!")
+            elif choice != 0:
+                print("Invalid selection. Try again.")
 
     def give_random_asset(self):
         """Creates a random asset and adds to player rig inventory."""

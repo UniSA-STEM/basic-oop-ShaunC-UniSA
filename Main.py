@@ -1,10 +1,10 @@
 """
 File: main.py
-Description: This contains the main program logic for 'Into the Grid'.
+Description: This contains the main program logic for "Into the Grid".
 Author: Shaun Cantley
 ID: cansy012@mymail.unisa.edu.au
 Username: cansy012
-This is my own work as defined by the University's Academic Misconduct Policy.
+This is my own work as defined by the University"s Academic Misconduct Policy.
 """
 
 # Imports
@@ -35,6 +35,7 @@ def play(hacker, other_players):
                         "5: Encrypt Asset",
                         "6: Decrypt Asset",
                         "7: Extract Asset",
+                        "8: Move Asset",
                         "",
                         "I: View inventory",
                         "S: Show Status",
@@ -80,7 +81,7 @@ def play(hacker, other_players):
                     elif choice == "4":  # Spike Attack
                         if player.rig:
                             print("Valid targets:")
-                            for i, p in enumerate(other_players, start=1): # Prevents AI from randomly targeting itself
+                            for i, p in enumerate(other_players, start=1): # Prevents AI from targeting itself
                                 print(f"{i}) {p.name}")
                             target_index = int(input("Choose target (number): ")) - 1
                             target = other_players[target_index]
@@ -107,12 +108,43 @@ def play(hacker, other_players):
                         input("\nPress Enter to continue...")
 
                     elif choice == "7":  # Extract Assets
+                        if not player.rig:
+                            print(f"{player.name} needs a rig to attempt extraction.\n")
+                            input("\nPress Enter to continue...")
+                            continue
+                        print("Valid targets:") # Prevents AI from targeting itself
+                        for i, p in enumerate(other_players, start=1):
+                            print(f"{i}) {p.name} {"No Rig" if not p.rig else "Broken Rig)" if p.rig.broken else ""}")
+                        try:
+                            target_index = int(input("Choose target (number): ")) - 1
+                            target = other_players[target_index]
+                        except (ValueError, IndexError):
+                            print("Invalid selection.")
+                            input("\nPress Enter to continue...")
+                            continue
                         token = next((a for a in player.inventory if isinstance(a, CryptoToken)), None)
-                        if token and player.inventory:
-                            player.inventory.remove(token)
+                        if not token:
+                            print(f"{player.name} needs a CryptoToken to do that.\n")
+                            input("\nPress Enter to continue...")
+                            continue
+                        player.inventory.remove(token)
+                        if not target.rig:
+                            print(f"{target.name} has no rig — nothing to extract.")
+                            input("\nPress Enter to continue...")
+                            continue
+                        success = target.rig.extract_unsecured_assets(player)
+                        if success:
                             turn_taken = True
                         else:
-                            print(f"{player.name} needs a CryptoToken to do that.\n")
+                            print("Extraction failed.")
+                        input("\nPress Enter to continue...")
+
+                    elif choice == "8":  # Transfer Unencrypted Assets from Rig
+                        if player.rig:
+                            player.rig.move_item()
+                            turn_taken = True
+                        else:
+                            print("Cannot transfer assets. No rig available.\n")
                         input("\nPress Enter to continue...")
 
                     elif choice == "i":  # View inventory

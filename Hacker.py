@@ -30,7 +30,7 @@ class Hacker:
         token = next((a for a in self.inventory if isinstance(a, CryptoToken)), None)
         if token:
             self.inventory.remove(token)
-            self.rig = Rig(f"{self.name}'s Rig")
+            self.rig = Rig(f"{self.name}'s Rig", self)  # pass self as owner
             time.sleep(1)
             print(f"{self.name} acquired a rig.")
         else:

@@ -21,6 +21,10 @@ def play(hacker, other_players):
     all_players = [hacker] + other_players  # List to manage turns
 
     while running:
+        all_players = [p for p in all_players if p.alive] # End the game when only one hacker remains
+        if len(all_players) <= 1:
+            print(f"\n{all_players[0].name} is the last hacker alive! Game over.")
+            running = False
         print(f"\n--- Turn {turn_number} ---\n")
         for player in all_players:
             turn_taken = False
@@ -28,13 +32,13 @@ def play(hacker, other_players):
                 if player == hacker:
                     title = f"*** Okay {player.name}, how should we proceed? ***"
                     options = [
-                        "1: Acquire rig",
-                        "2: Upgrade rig",
-                        "3: Repair rig",
-                        "4: Spike Player",
-                        "5: Encrypt Asset",
+                        "1: Acquire Rig",
+                        "2: Upgrade Rig",
+                        "3: Repair Rig",
+                        "4: Spike Opponent",
+                        "5: Extract Opponents Asset",
                         "6: Decrypt Asset",
-                        "7: Extract Asset",
+                        "7: Encrypt Asset",
                         "8: Move Asset",
                         "",
                         "I: View inventory",
@@ -91,29 +95,13 @@ def play(hacker, other_players):
                             print(f"{player.name} needs a rig to send a spike.\n")
                         input("\nPress Enter to continue...")
 
-                    elif choice == "5":  # Encrypt Asset
-                        if player.rig:
-                            player.encrypt_assets()
-                            turn_taken = True
-                        else:
-                            print("Cannot encrypt. No rig available.\n")
-                        input("\nPress Enter to continue...")
-
-                    elif choice == "6":  # Decrypt Asset
-                        if player.rig:
-                            player.decrypt_assets()
-                            turn_taken = True
-                        else:
-                            print("Cannot decrypt. No rig available.\n")
-                        input("\nPress Enter to continue...")
-
-                    elif choice == "7":  # Extract Assets
+                    elif choice == "5":  # Extract Assets
                         if not player.rig:
                             print(f"{player.name} needs a rig to attempt extraction.\n")
                             input("\nPress Enter to continue...")
                             continue
-                        print("Valid targets:") # Prevents AI from targeting itself
-                        for i, p in enumerate(other_players, start=1):
+                        print("Valid targets:")
+                        for i, p in enumerate(other_players, start=1): # Prevents AI from targeting itself
                             print(f"{i}) {p.name} {"No Rig" if not p.rig else "Broken Rig)" if p.rig.broken else ""}")
                         try:
                             target_index = int(input("Choose target (number): ")) - 1
@@ -137,6 +125,22 @@ def play(hacker, other_players):
                             turn_taken = True
                         else:
                             print("Extraction failed.")
+                        input("\nPress Enter to continue...")
+
+                    elif choice == "6":  # Decrypt Asset
+                        if player.rig:
+                            player.decrypt_assets()
+                            turn_taken = True
+                        else:
+                            print("Cannot decrypt. No rig available.\n")
+                        input("\nPress Enter to continue...")
+
+                    elif choice == "7":  # Encrypt Asset
+                        if player.rig:
+                            player.encrypt_assets()
+                            turn_taken = True
+                        else:
+                            print("Cannot encrypt. No rig available.\n")
                         input("\nPress Enter to continue...")
 
                     elif choice == "8":  # Transfer Unencrypted Assets from Rig
@@ -195,7 +199,7 @@ def play(hacker, other_players):
                         if action == "acquires a rig":
                             player.acquire_rig()
                         elif action == "spikes": # Spike target list that excludes current player
-                            valid_targets = [p for p in all_players if p is not player]
+                            valid_targets = [p for p in all_players if p is not player and p.alive]
                             target = random.choice(valid_targets)
                             player.trace_level += 1
                             player.launch_data_spike(target)
@@ -210,6 +214,12 @@ def play(hacker, other_players):
             turn_number += 1 # Increment turn
             action = None # Initialise variable
             for player in other_players + [hacker]:  # All players get a new random asset at end of turn
+                player.trace_level = max(0, player.trace_level - 0.25)  # Decay trace level each turn
+                if player.trace_level > 5.0:
+                    player.exposed = True
+                else:
+                    player.exposed = False
+
                 if player.rig:
                     asset = player.rig.give_random_asset()
                     asset_name = asset.name if asset else "Nothing"
@@ -225,6 +235,9 @@ def play(hacker, other_players):
                 elif action == "upgrades their rig":
                     print(f"| {player.name} {action}".ljust(width) + " |")
                 print(f"| {player.name} adds a {asset_name} to inventory".ljust(width) + " |")
+                print(f"| {player.name}'s trace level: {player.trace_level:.2f}".ljust(width) + " |")
+                if player.exposed:
+                    print(f"| DANGER! {player.name} is EXPOSED!".ljust(width) + " |")
                 print("+" + "-" * width + "+")
                 time.sleep(1)
 
@@ -241,6 +254,7 @@ def test_mode():
             "3: Encrypt without Security Chip",
             "4: Upgrading rigs",
             "5: Call strings",
+            "6: High Trace Level",
             "Q: Return to Main Menu"]
 
         # Test menu format
@@ -314,6 +328,18 @@ def test_mode():
             print(rig)
             input("\nTest Successful! Press Enter to continue...")
 
+        elif choice == "6": # Test: High trace level attack logic (death simulator)
+            player1 = Hacker("Player1")
+            player2 = Hacker("Player2")
+            player1.acquire_rig()
+            player2.acquire_rig()
+            player1.rig.unencrypted_storage.append(DataSpike())
+            player2.trace_level = 6.0
+            player2.exposed = True
+            print(f"\nBefore: {player2.name} alive={player2.alive}, exposed={player2.exposed}\n")
+            player1.launch_data_spike(player2)
+            print(f"\nAfter: {player2.name} alive={player2.alive}\n")
+            input("\nTest Successful! Press Enter to continue...")
 
         elif choice == "q":
             # Quit to main menu

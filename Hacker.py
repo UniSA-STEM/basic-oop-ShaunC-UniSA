@@ -20,6 +20,7 @@ class Hacker:
         self.rig = None
         self.trace_level = 0
         self.exposed = False
+        self.alive = True
         self.inventory = []
         self.inventory.append(CryptoToken())
         self.inventory.append(HardwarePatch())
@@ -61,6 +62,10 @@ class Hacker:
         self.rig.unencrypted_storage.remove(token)
         print(f"{self.name} launched a Data Spike at {target.name}!")
         self.trace_level += 1
+        if target.exposed:
+            print(f"{target.name} was exposed and is TERMINATED!")
+            target.alive = False
+            return
         if target.rig:
             target.rig.condition -= 1
             target.rig.check_damage(target)

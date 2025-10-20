@@ -19,6 +19,8 @@ class Hacker:
         self.upgrade_level = 0
         self.rig = None
         self.trace_level = 0
+        self.damage_taken = 0
+        self.damage_dealt = 0
         self.exposed = False
         self.alive = True
         self.inventory = []
@@ -66,11 +68,11 @@ class Hacker:
             print(f"{target.name} was exposed and is TERMINATED!")
             target.alive = False
             return
-        if target.rig:
-            target.rig.condition -= 1
+        if target.rig: # Calls damage function to calculate actual damage with multipliers
+            target.rig.take_damage(1, attacker=self)
             target.rig.check_damage(target)
         else:
-            print(f"{target.name} has no rig! The attack has no effect.")
+            print(f"{target.name} has no Rig! The attack has no effect.")
         time.sleep(1)
 
     def encrypt_assets(self):

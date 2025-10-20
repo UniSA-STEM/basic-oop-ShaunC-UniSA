@@ -52,16 +52,6 @@ class Rig:
             print(f"{hacker.name} does not have a CryptoToken to repair {self.name}.")
         time.sleep(1)
 
-    def take_damage(self, hacker):
-        """Get hit with a data spike!"""
-        if self:
-            self.condition -= 1
-            print(f"The rig was damaged by a spike!")
-        else:
-            print("Hacker doesn't have a rig! No damage.")
-        self.check_damage(hacker)
-        time.sleep(1)
-
     def check_damage(self, hacker):
         """Checks the damage level of the rig"""
         if self.condition == 2:
@@ -94,6 +84,25 @@ class Rig:
                 print(f"{asset.name} moved to inventory. Your Trace level increased by 1!")
             elif choice != 0:
                 print("Invalid selection. Try again.")
+
+    def damage_multiplier(self):
+        """Damage multiplier based on upgrade level. Each upgrade halves the damage."""
+        return 0.5 ** max(0, int(self.upgrade_level))
+
+    def take_damage(self, base_damage, attacker=None):
+        """Apply damage to the rig, reduced by upgrades."""
+        if self.broken: # If the Rig is already broken no need to continue
+            return
+        multiplier = self.damage_multiplier() # Deal actual damage with multipliers
+        actual_damage = base_damage * multiplier
+        self.damage += actual_damage
+        self.condition -= actual_damage
+        if attacker:
+            attacker.damage_dealt += actual_damage  # track damage dealt
+            self.owner.damage_taken += actual_damage  # track damage received
+        if self.condition <= 0: # Prevents condition from being negative
+            self.broken = True
+            self.condition = 0
 
     def give_random_asset(self):
         """Creates a random asset and adds to player rig inventory."""
